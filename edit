@@ -1,7 +1,7 @@
 rule-providers:
   proxy-domain:
-    behavior: domain # 使用 domain 类规则集，可以使匹配更高效
-    url: https://github.com/blackmatrix7/ios_rule_script/blob/master/rule/Clash/Advertising/Advertising_Domain.yaml
+    behavior: domain
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/release/rule/Clash/Advertising/Advertising.yaml
     interval: 86400
  
 rules:
