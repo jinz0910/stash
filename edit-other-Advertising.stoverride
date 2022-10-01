@@ -1,0 +1,13 @@
+name: 去广告规则-other-edit
+desc: 分流去广告
+
+rule-providers:
+  Adblock-Domain:
+    type: http
+    behavior: classical
+    url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Himalaya/Himalaya.yaml"
+    path: ./ruleset/AdDomain.yaml
+    interval: 86400
+    
+rules:
+  - RULE-SET,Adblock-Domain,REJECT
