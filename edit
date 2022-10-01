@@ -1,0 +1,400 @@
+###########################################################
+# Awesome Beta conf for Stash
+# 本配置，以尽可能小为主，且为自用
+# 另外，就是新功能的尝鲜，如有问题，还请使用 Awesome.yaml 稳定版
+###########################################################
+# @created: 2022-08-22
+# @update 2022-09-26
+# @source https://github.com/QuentinHsu/Awesome-Apple
+###########################################################
+# 参考配置：
+# https://stash.wiki
+###########################################################
+# autocorrect-disable
+mixed-port: 7890
+mode: rule
+log-level: info
+
+dns:
+  enable: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    # from: https://github.com/Kr328/ClashForAndroid/blob/ffa559a57102ed8bc20eba41aa236a7764741bf9/core/src/main/golang/native/config/defaults.go#L10
+    # Stun Services
+    - '+.stun.*.*'
+    - '+.stun.*.*.*'
+    - '+.stun.*.*.*.*'
+    - '+.stun.*.*.*.*.*'
+    # Google Voices
+    - 'lens.l.google.com'
+    # Nintendo Switch
+    - '*.n.n.srv.nintendo.net'
+    # PlayStation
+    - '+.stun.playstation.net'
+    # XBox
+    - 'xbox.*.*.microsoft.com'
+    - '*.*.xboxlive.com'
+    # Microsoft
+    - '*.msftncsi.com'
+    - '*.msftconnecttest.com'
+    # Bilibili CDN
+    - '*.mcdn.bilivideo.cn'
+  # 假如你在使用 proxy-groups => ssid-policy 时，nameserver 下必须配置 system，否则部分请求会异常。
+  nameserver:
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+    - 192.168.100.1 # 这里是特定的局域网网关 DNS，如有需要自行替换
+
+http:
+  mitm:
+    - g.cn
+    - "*.google.cn"
+    - "www.firefox.com.cn"
+  rewrite:
+    - ^https?:\/\/(www.)?(g|google)\.cn https://www.google.com 302
+    - ^https?:\/\/(www.)?firefox\.com\.cn\/(download\/)?$ https://www.mozilla.org/zh-CN/firefox/new/ 302
+
+# 假如用组合订阅多个机场，就没必要使用 subscribe-url 了
+subscribe-url: https://sub.store/download/collection/subs
+# 替换上面文字用于 Stash 获取机场流量信息并在主页显示 （Stash1.6.1 build 287+支持）
+
+# 远程资源默认配置
+remote-resources-default-config: &remote-resources-default-config
+  type: http
+  interval: 86400
+
+proxy-providers:
+  # 全部节点
+  all-sub: &all-sub # 建立锚点
+    <<: *remote-resources-default-config
+    # 此处默认使用 Sub-Store 订阅链接，如果需要使用其他订阅链接，可以替换下面的 url 即可
+    # Sub-Store 与 Clash 类型订阅链接，都可以作为 url 的值。多个链接使用英文符号的竖杠 | 隔开一起写上即可
+    url: https://sub.store/download/collection/subs
+    path: ./all.yaml
+    health-check:
+      enable: true
+      interval: 600
+      url: https://captive.apple.com
+
+proxies:
+
+proxy-groups:
+
+  - name: Outbound Policy
+    type: select
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/Server.png?raw=true
+    proxies:
+      - SSID Policy
+      - DIRECT
+      - Auto Select
+      - Manual Select
+      - Fallback
+      - Country
+
+  - name: Global Proxy
+    type: select
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/Global.png?raw=true
+    proxies: &global-proxy
+      - Outbound Policy
+      - DIRECT
+
+  - name: Global Direct
+    type: select
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/China_Map.png?raw=true
+    proxies: &global-direct
+      - DIRECT
+      - Outbound Policy
+
+  - name: Final
+    type: select
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/Final.png?raw=true
+    proxies:
+      *global-direct
+
+  - name: Apple
+    type: select
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/Apple.png?raw=true
+    proxies:
+      *global-direct
+
+  - name: Microsoft
+    type: select
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/Microsoft.png?raw=true
+    proxies:
+      *global-direct
+
+  - name: Duolingo
+    type: select
+    icon: https://github.com/QuentinHsu/Awesome-Apple/blob/main/Icon/duolingo.png?raw=true
+    proxies:
+      - Auto Hong Kong
+      - Fallback Hong Kong
+      - DIRECT
+    use:
+      - all-sub
+    filter: 港|🇭🇰|HK|Hong Kong
+
+  - name: Speedtest
+    type: select
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/Speedtest.png?raw=true
+    proxies:
+      *global-direct
+
+  - name: Discord
+    type: select
+    icon: https://github.com/QuentinHsu/Awesome-Apple/blob/main/Icon/discord.png?raw=true
+    proxies:
+      - Auto Hong Kong
+      - Fallback Hong Kong
+      - DIRECT
+    use:
+      - all-sub
+    filter: 港|🇭🇰|HK|Hong Kong
+
+  - name: Steam
+    type: select
+    icon: https://github.com/QuentinHsu/Awesome-Apple/blob/main/Icon/steam.png?raw=true
+    proxies:
+      - Auto Hong Kong
+      - Fallback Hong Kong
+      - DIRECT
+    use:
+      - all-sub
+    filter: 港|🇭🇰|HK|Hong Kong
+
+  - name: AD Block
+    type: select
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/Advertising.png?raw=true
+    proxies:
+      - REJECT
+      - DIRECT
+
+  - name: Privacy
+    type: select
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/Lock.png?raw=true
+    proxies:
+      - REJECT
+      - DIRECT
+
+  - name: SSID Policy
+    type: select
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/SSID.png?raw=true
+    proxies:
+    # 此处为配置文件中的已有策略组
+      - Server Policy
+      - DIRECT  # 虽说 DIRECT 是保留字。但必须配置该策略选项，于此代理集的 proxies 下，不然该代理集就只有 1 个策略选项
+    ssid-policy:
+    # cellular: 保留字，指代蜂窝数据条件下
+    # default：保留字，指代其他 SSID 条件下，默认为 DIRECT 策略
+    # DIRECT：保留字，直连策略
+      HedyLamarr: DIRECT  # HedyLamarr，为 SSID 名称
+      HedyLamarr_5G: DIRECT  # HedyLamarr，为 SSID 名称
+      cellular: Server Policy
+      default: Server Policy
+
+  - name: Server Policy
+    type: select
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/Server.png?raw=true
+    proxies:
+      - Auto Select
+      - Manual Select
+      - Fallback
+      - Country
+
+  - name: Manual Select
+    type: select
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/Rocket.png?raw=true
+    use:
+      - all-sub
+
+  - name: Auto Select
+    type: url-test
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/Auto.png?raw=true
+    url: https://captive.apple.com
+    interval: 300
+    use:
+      - all-sub
+
+  - name: Fallback
+    type: fallback
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/Bypass.png?raw=true
+    url: https://captive.apple.com
+    interval: 300
+    use:
+      - all-sub
+
+  - name: Country
+    type: select
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/World_Map.png?raw=true
+    proxies: &Country
+      - Hong Kong
+      - Japan
+      - Tai Wan
+      - America
+      - Other Country
+
+  - name: Hong Kong
+    type: select
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/Hong_Kong.png?raw=true
+    use:
+      - all-sub
+    filter: 港|🇭🇰|HK|Hong Kong
+
+  - name: Auto Hong Kong
+    type: url-test
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/Hong_Kong.png?raw=true
+    url: https://captive.apple.com
+    interval: 300
+    use:
+      - all-sub
+    filter: 港|🇭🇰|HK|Hong Kong
+
+  - name: Fallback Hong Kong
+    type: fallback
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/Hong_Kong.png?raw=true
+    url: https://captive.apple.com
+    use:
+      - all-sub
+    filter: 港|🇭🇰|HK|Hong Kong
+
+  - name: Japan
+    type: select
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/Japan.png?raw=true
+    use:
+      - all-sub
+    filter: 日|🇯🇵|东京|JP|Japan
+
+  - name: Tai Wan
+    type: select
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/Taiwan.png?raw=true
+    use:
+      - all-sub
+    filter: 台|🇨🇳|🇹🇼|湾|TW|Taiwan
+
+  - name: America
+    type: select
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/United_States.png?raw=true
+    use:
+      - all-sub
+    filter: 美国|美|🇺🇲|US|American
+
+  - name: Other Country
+    type: select
+    icon: https://github.com/Koolson/Qure/blob/master/IconSet/Color/World_Map.png?raw=true
+    use:
+      - all-sub
+    filter: ^(?!.*(香港|港|🇭🇰|HK|Hong Kong|日本|日|🇯🇵|JP|Japan|台湾|台|🇹🇼|TW|Taiwan|美国|美|🇺🇲|US|American|CN)).*
+
+
+rule-providers:
+
+  privacy:
+    <<: *remote-resources-default-config
+    behavior: classical
+    url: https://github.com/QuentinHsu/network-rules/blob/release/Clash/DivineEngine-Privacy.yaml?raw=true
+    path: ./ruleset/privacy.yaml
+
+  ad-block:
+    <<: *remote-resources-default-config
+    behavior: classical
+    url: https://github.com/QuentinHsu/network-rules/blob/release/Clash/DivineEngine-AD.yaml?raw=true
+    path: ./ruleset/ad.yaml
+
+  youtube:
+    <<: *remote-resources-default-config
+    behavior: classical
+    url: https://github.com/blackmatrix7/ios_rule_script/blob/master/rule/Clash/YouTube/YouTube.yaml?raw=true
+    path: ./ruleset/youtube.yaml
+
+  google:
+    <<: *remote-resources-default-config
+    behavior: classical
+    url: https://github.com/blackmatrix7/ios_rule_script/blob/master/rule/Clash/Google/Google.yaml?raw=true
+    path: ./ruleset/google.yaml
+
+  github:
+    <<: *remote-resources-default-config
+    behavior: classical
+    url: https://github.com/blackmatrix7/ios_rule_script/blob/master/rule/Clash/GitHub/GitHub.yaml?raw=true
+    path: ./ruleset/github.yaml
+
+  telegram-asn:
+    <<: *remote-resources-default-config
+    behavior: classical
+    url: https://github.com/Coldvvater/Clash/blob/master/RuleSet/ASN_Telegram.yaml?raw=true
+    path: ./ruleset/telegram-asn.yaml
+
+  twitter:
+    <<: *remote-resources-default-config
+    behavior: classical
+    url: https://github.com/blackmatrix7/ios_rule_script/blob/master/rule/Clash/Twitter/Twitter.yaml?raw=true
+    path: ./ruleset/twitter.yaml
+
+  apple:
+    <<: *remote-resources-default-config
+    behavior: classical
+    url: https://github.com/blackmatrix7/ios_rule_script/blob/master/rule/Clash/Apple/Apple.yaml?raw=true
+    path: ./ruleset/apple.yaml
+
+  microsoft:
+    <<: *remote-resources-default-config
+    behavior: classical
+    url: https://github.com/blackmatrix7/ios_rule_script/blob/master/rule/Clash/Microsoft/Microsoft.yaml?raw=true
+    path: ./ruleset/microsoft.yaml
+
+  speedtest:
+    <<: *remote-resources-default-config
+    behavior: classical
+    url: https://github.com/blackmatrix7/ios_rule_script/blob/master/rule/Clash/Speedtest/Speedtest.yaml?raw=true
+    path: ./ruleset/speedtest.yaml
+
+  discord:
+    <<: *remote-resources-default-config
+    behavior: classical
+    url: https://github.com/blackmatrix7/ios_rule_script/blob/master/rule/Clash/Discord/Discord.yaml?raw=true
+    path: ./ruleset/discord.yaml
+
+  steam:
+    <<: *remote-resources-default-config
+    behavior: classical
+    url: https://github.com/blackmatrix7/ios_rule_script/blob/master/rule/Clash/Steam/Steam.yaml?raw=true
+    path: ./ruleset/steam.yaml
+
+  global-proxy:
+    <<: *remote-resources-default-config
+    behavior: classical
+    url: https://github.com/QuentinHsu/network-rules/blob/release/Clash/ACL4SSR-Proxy.yaml?raw=true
+    path: ./ruleset/global-proxy.yaml
+
+  china-asn:
+    <<: *remote-resources-default-config
+    behavior: classical
+    url: https://github.com/Coldvvater/Clash/blob/master/RuleSet/ASN_China.yaml?raw=true
+    path: ./ruleset/china-asn.yaml
+
+rules:
+# ################ Local Rule
+  # 避免重新导入配置后无法下载 GitHub 上的资源
+  - DOMAIN,raw.githubusercontent.com,Global Proxy
+  - DOMAIN,github.com,Global Proxy
+  # 避免 Sub-Store 访问不了面板
+  - DOMAIN-SUFFIX,vercel.app,Global Proxy
+  - DOMAIN-KEYWORD,duolingo,Duolingo
+# ################ Remote Rule
+  - RULE-SET,ad-block,AD Block
+  - RULE-SET,privacy,Privacy
+  - RULE-SET,apple,Apple
+  - RULE-SET,microsoft,Microsoft
+  - RULE-SET,speedtest,Speedtest
+  - RULE-SET,discord,Discord
+  - RULE-SET,steam,Steam
+  - RULE-SET,github,Global Proxy
+  - RULE-SET,telegram-asn,Global Proxy
+  - RULE-SET,twitter,Global Proxy
+  - RULE-SET,youtube,Global Proxy
+  - RULE-SET,google,Global Proxy
+  - RULE-SET,global-proxy,Global Proxy
+  - RULE-SET,china-asn,Global Direct
+  - GEOIP,CN,Global Direct
+  - MATCH,Final
