@@ -9,4 +9,4 @@ rule-providers:
     interval: 86400
 
 rules:
-  - RULE-SET,tiktok,
+  - RULE-SET,tiktok,DIRECT
