@@ -1,0 +1,12 @@
+name: tiktok-edit
+desc: tiktok分流
+
+rule-providers:
+  tiktok:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/Semporia/TikTok-Unlock/master/Shadowrocket/TikTok.list"
+    interval: 86400
+
+rules:
+  - RULE-SET,tiktok,REJECT
