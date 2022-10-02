@@ -5,7 +5,7 @@ rule-providers:
   tiktok:
     type: http
     behavior: classical
-    url: "https://raw.githubusercontent.com/Semporia/TikTok-Unlock/master/Shadowrocket/TikTok.list"
+    url: "https://raw.githubusercontent.com/jinz0910/stash/main/tiktok.yaml"
     interval: 86400
 
 rules:
