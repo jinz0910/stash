@@ -61,8 +61,13 @@ proxy-providers:
       enable: true
       interval: 3600
       url: http://cp.cloudflare.com/generate_204
-    
-  #美国节点
+  
+  #ALL节点
+  MyProxy-ALL:
+    <<: *MyProxy #引用锚点内容
+    filter: "^(?!.*(Traffic|Expire).*)"  
+ 
+ #美国节点
   MyProxy-US:
     <<: *MyProxy #引用锚点内容
     filter: "美|🇺🇲|US|(?i)States|American"
@@ -90,7 +95,7 @@ proxy-providers:
   #OTHERS
   MyProxy-OT:
     <<: *MyProxy #引用锚点内容
-    filter: "^((?!新加坡|台湾|日本|香港|美国).)*"
+    filter: "^(?!.*(新加坡|台湾|日本|香港|美国|Traffic|Expire).*)"
 
 #策略组
 proxy-groups:
@@ -98,7 +103,7 @@ proxy-groups:
   - name: Proxy
     type: select
     use:
-      - MyProxy
+      - MyProxy-ALL
     icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Rocket.png
 
   - name: AUTO
