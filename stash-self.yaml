@@ -87,7 +87,7 @@ proxy-providers:
     <<: *MyProxy #引用锚点内容
     filter: "新加坡|坡|狮城|🇸🇬|SG|(?i)Singapore"
     
-  #新加坡节点
+  #OTHERS
   MyProxy-OT:
     <<: *MyProxy #引用锚点内容
     filter: "^((?!新加坡|台湾|日本|香港|美国).)*"
@@ -101,7 +101,7 @@ proxy-groups:
       - MyProxy
     icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Rocket.png
 
-  - name: 自动选择
+  - name: AUTO
     type: url-test
     icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Auto.png
     use: 
